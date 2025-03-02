@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>echarts</title>
+      <!-- 引入 echarts.js -->
+    <script src="http://libs.baidu.com/jquery/1.7.2/jquery.min.js"></script>
+    <!-- 引入jquery.js -->
+    <script src="https://cdn.bootcss.com/echarts/4.1.0.rc2/echarts.min.js"></script>
+    <link href="http://c.csdnimg.cn/public/favicon.ico" rel="SHORTCUT ICON" />
+</head>
+<body>
+    <div align="center">
+    <button onclick="makePie()">饼图</button>
+    <button onclick="makeBar()">柱状图</button>
+    <button onclick="makeLine()">线形图</button>
+    <button onclick="makeRadar()">雷达图</button>
+    <br><br>
+    <hr>
+    </div>
+
+<div id="main" style="width: 1200px;height:600px;"></div>
+
+
+<script type="text/javascript">
+    var myChart = echarts.init(document.getElementById('main'));
+
+    var app={
+
+        xproduct1:[],
+        yvalues1:[],
+        xname1:[],
+        ynum1:[]
+    };
+    $(document).ready(function () {
+        getData();
+
+        console.log(app.xproduct1);
+        console.log(app.yvalues1);
+        console.log(app.xname1);
+        console.log(app.ynum1)
+    });
+    function  getData() {
+        $.ajax({
+            url:'/test',
+            data:{},
+            type:'POST',
+            async:false,
+            dataType:'json',
+            success:function (data) {
+                app.xproduct1 = data.xproduct;
+                app.yvalues1 = data.yvalues;
+                app.xname1 = data.xname;
+                app.ynum1 = data.ynum;
+
+                option_bar={
+                    title:{
+                        text:'菜品前十名'
+                    },
+                    tooltip:{},
+                    legend:{
+                        data:['菜名']
+                    },
+                    xAxis:{
+                        type:'category',
+                        data: app.xproduct1
+
+                    },
+                    yAxis:{
+                        type:'value'
+                      },
+                    series: [{
+                        name: '数量',
+                        type: 'bar',
+                        data: app.yvalues1
+                    }]
+                };
+option_pie = {
+        title: {
+            text: '饮食偏好分类',
+            subtext: '最受欢迎的category',
+            x: 'left'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            orient: 'vertical',
+            left: 'left',
+            data: ['奶茶专区', '甜品/蛋糕','包子/早点','午饭套餐','肉类炒菜','素菜专区','川菜']
+        },
+        series: [
+            {
+                name: '类别',
+                type: 'pie',
+                radius: '65%',
+                center: ['50%', '60%'],
+                data: [
+                    {value: app.ynum1[0],name: '奶茶专区'},
+                    {value: app.ynum1[1],name: '甜品/蛋糕'},
+                    {value: app.ynum1[2],name: '包子/早点'},
+                    {value: app.ynum1[3],name: '午饭套餐'},
+                    {value: app.ynum1[4],name: '肉类炒菜'},
+                    {value: app.ynum1[5],name: '素菜专区'},
+                    {value: app.ynum1[6],name: '川菜'},
+
+                ],
+
+
+
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        ],
+        color: ['rgb(131,175,155)', 'rgb(252,157,154)', 'rgb(249,205,173)', 'rgb(200,200,169)',]
+    }
+
+
+           },
+
+
+
+            error:function (msg) {
+                console.log(msg);
+                alert('系统发生错误');
+            }
+
+
+         })
+        }
+
+
+
+                //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!}
+    function makeBar() {
+        myChart.clear();
+        myChart.setOption(option_bar);//setOption方法生成一个简单的住状图
+    }
+    function makePie() {
+        myChart.clear();
+        myChart.setOption(option_pie);//setOption方法生成一个简单的饼状图
+    }
+    makeBar()
+</script>
+
+</body>
+</html>
+
+
+
